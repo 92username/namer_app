@@ -2,19 +2,19 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// Função principal que inicia o aplicativo
+// Main function that starts the application
 void main() {
   runApp(MyApp());
 }
 
-// Widget principal do aplicativo
+// Main widget of the application
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      // Provedor de estado para o aplicativo
+      // State provider for the application
       create: (context) => MyAppState(),
       child: MaterialApp(
         title: 'Namer App',
@@ -22,52 +22,52 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
               seedColor:
-                  const Color.fromARGB(255, 255, 4, 4)), // Tema do aplicativo
+                  const Color.fromARGB(255, 255, 4, 4)), // Application theme
         ),
-        home: MyHomePage(), // Página inicial do aplicativo
+        home: MyHomePage(), // Initial page of the application
       ),
     );
   }
 }
 
-// Classe que gerencia o estado do aplicativo
+// Class that manages the state of the application
 class MyAppState extends ChangeNotifier {
-  // Par de palavras atual
+  // Current word pair
   var current = WordPair.random();
 
-  // Gera um novo par de palavras
+  // Generates a new word pair
   void getNext() {
     current = WordPair.random();
-    notifyListeners(); // Notifica ouvintes sobre a mudança de estado
+    notifyListeners(); // Notifies listeners about the state change
   }
 
-  // Lista de favoritos
+  // List of favorites
   var favorites = <WordPair>[];
 
-  // Adiciona ou remove o par atual dos favoritos
+  // Adds or removes the current pair from favorites
   void toggleFavorite() {
     if (favorites.contains(current)) {
       favorites.remove(current);
     } else {
       favorites.add(current);
     }
-    notifyListeners(); // Notifica ouvintes sobre a mudança de estado
+    notifyListeners(); // Notifies listeners about the state change
   }
 }
 
-// Página inicial do aplicativo
+// Initial page of the application
 class MyHomePage extends StatefulWidget {
-  var selectedIndex = 0; // Índice do destino selecionado
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0; // Index of the selected destination
+
   @override
   Widget build(BuildContext context) {
     Widget page;
-    switch (widget.selectedIndex) {
+    switch (_selectedIndex) {
       case 0:
         page = GeneratorPage();
 
@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = FavoritesPage();
 
       default:
-        throw UnimplementedError('no widget for ${widget.selectedIndex}');
+        throw UnimplementedError('no widget for $_selectedIndex');
     }
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
@@ -94,10 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     label: Text('Favorites'),
                   ),
                 ],
-                selectedIndex: widget.selectedIndex,
+                selectedIndex: _selectedIndex,
                 onDestinationSelected: (value) {
                   setState(() {
-                    widget.selectedIndex = value;
+                    _selectedIndex = value;
                   });
                 },
               ),
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Expanded(
               child: Container(
                 color: Theme.of(context).colorScheme.primaryContainer,
-                child: page, // Página geradora de pares de palavras
+                child: page, // Page generator for word pairs
               ),
             ),
           ],
@@ -115,15 +115,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// Página que gera e exibe pares de palavras
+// Page that generates and displays word pairs
 class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState =
-        context.watch<MyAppState>(); // Observa o estado do aplicativo
-    var pair = appState.current; // Par de palavras atual
+        context.watch<MyAppState>(); // Observes the application state
+    var pair = appState.current; // Current word pair
 
-    // Define o ícone com base nos favoritos
+    // Sets the icon based on favorites
     IconData icon;
     if (appState.favorites.contains(pair)) {
       icon = Icons.favorite;
@@ -135,14 +135,14 @@ class GeneratorPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          BigCard(pair: pair), // Exibe o par de palavras em um cartão grande
+          BigCard(pair: pair), // Displays the word pair in a large card
           SizedBox(height: 10),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  appState.toggleFavorite(); // Alterna o estado de favorito
+                  appState.toggleFavorite(); // Toggles the favorite state
                 },
                 icon: Icon(icon),
                 label: Text('Like'),
@@ -150,7 +150,7 @@ class GeneratorPage extends StatelessWidget {
               SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {
-                  appState.getNext(); // Gera um novo par de palavras
+                  appState.getNext(); // Generates a new word pair
                 },
                 child: Text('Next'),
               ),
@@ -162,7 +162,7 @@ class GeneratorPage extends StatelessWidget {
   }
 }
 
-// pagina de favoritos
+// Favorites page
 class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -191,7 +191,7 @@ class FavoritesPage extends StatelessWidget {
   }
 }
 
-// Widget que exibe um par de palavras em um cartão grande
+// Widget that displays a pair of words in a large card
 class BigCard extends StatelessWidget {
   const BigCard({
     super.key,
@@ -203,7 +203,7 @@ class BigCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Estilo de texto personalizado
+    // Custom text style
     final style = theme.textTheme.displayMedium!.copyWith(
       fontWeight: FontWeight.bold,
       color: theme.colorScheme.onPrimary,
@@ -211,15 +211,15 @@ class BigCard extends StatelessWidget {
     );
 
     return Card(
-      color: theme.colorScheme.primary, // Cor do cartão
-      elevation: 10.0, // Aumenta a altura da sombra
+      color: theme.colorScheme.primary, // Card color
+      elevation: 10.0, // Increases shadow height
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Text(
-          pair.asLowerCase, // Texto do par de palavras em minúsculas
-          style: style, // Aplica o estilo de texto personalizado
+          pair.asLowerCase, // Text of the word pair in lowercase
+          style: style, // Applies the custom text style
           semanticsLabel:
-              "${pair.first} ${pair.second}", // Rótulo semântico para acessibilidade
+              "${pair.first} ${pair.second}", // Semantic label for accessibility
         ),
       ),
     );
